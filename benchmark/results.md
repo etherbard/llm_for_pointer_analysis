@@ -335,3 +335,248 @@ int main()
 p → arr[210]
 
 #### 02
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int arr[] = {10, 20, 30, 40, 50};
+    int *p = arr;
+    int n = 4;
+    for (int i = 0; i < n; i++)
+    {
+        p += 1;
+        n -= 1;
+    }
+
+    return 0;
+}
+
+// p → arr[2]
+```
+
+p → arr[2]
+
+#### 03
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node * complex_pointer_manipulation(struct Node *head, int n) {
+    struct Node *p = head;
+    int i = 0;
+
+    while (p != NULL) {
+        if (i == n) {
+            break;
+        }
+        p = p->next;
+        i++;
+    }
+
+    if (p != NULL) {
+        struct Node *temp = head;
+        while (temp != NULL) {
+            if (temp->data == p->data - n) {
+                p = temp;
+                break;
+            }
+            temp = temp->next;
+        }
+    }
+    return p;
+}
+
+int main() {
+    struct Node *head = malloc(sizeof(struct Node));
+    head->data = 1;
+    head->next = malloc(sizeof(struct Node));
+    head->next->data = 2;
+    head->next->next = malloc(sizeof(struct Node));
+    head->next->next->data = 3;
+    head->next->next->next = NULL;
+    //A linked list is created as “1 -> 2 -> 3”
+
+    struct Node *p = complex_pointer_manipulation(head, 1);
+    return 0;
+}
+
+//p → data 1
+```
+
+p → data 1
+
+#### 04
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int arr[] = {10, 20, 30, 40, 50, 60};
+    int *p = arr;
+    for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 2; j++)
+            p += 1;
+
+    return 0;
+}
+
+// p → arr[4]
+```
+
+p → arr[4]
+
+#### 05
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *reverse_traverse(struct Node *head, int n) {
+    struct Node *p = head;
+    int count = 0;
+    
+    while (p != NULL) {
+        count++;
+        p = p->next;
+    }
+    
+    if (n > count || n <= 0) {
+        return NULL;
+    }
+
+    p = head;
+    for (int i = 0; i < count - n; i++) {
+        p = p->next;
+    }
+
+    return p;
+}
+
+int main() {
+    struct Node *head = malloc(sizeof(struct Node));
+    head->data = 1;
+    head->next = malloc(sizeof(struct Node));
+    head->next->data = 2;
+    head->next->next = malloc(sizeof(struct Node));
+    head->next->next->data = 3;
+    head->next->next->next = NULL;
+
+    struct Node *p = reverse_traverse(head, 2);
+    return 0;
+}
+
+//p → data 2
+```
+
+p → data 2
+
+#### 06
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *skip_even(struct Node *head, int n) {
+    struct Node *p = head;
+    int count = 0;
+
+    while (p != NULL) {
+        if (p->data % 2 != 0) {
+            count++;
+            if (count == n) {
+                return p;
+            }
+        }
+        p = p->next;
+    }
+
+    return NULL;
+}
+
+int main() {
+    struct Node *head = malloc(sizeof(struct Node));
+    head->data = 1;
+    head->next = malloc(sizeof(struct Node));
+    head->next->data = 2;
+    head->next->next = malloc(sizeof(struct Node));
+    head->next->next->data = 3;
+    head->next->next->next = malloc(sizeof(struct Node));
+    head->next->next->next->data = 4;
+    head->next->next->next->next = NULL;
+
+    struct Node *p = skip_even(head, 2);
+    return 0;
+}
+
+//p → data 3
+```
+
+p → data 3
+
+#### 07
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *alternate_jump(struct Node *head) {
+    struct Node *p1 = head;
+    struct Node *p2 = head;
+
+    while (p2 != NULL && p2->next != NULL) {
+        p1 = p1->next;
+        p2 = p2->next->next;
+    }
+
+    return p1;
+}
+
+int main() {
+    struct Node *head = malloc(sizeof(struct Node));
+    head->data = 1;
+    head->next = malloc(sizeof(struct Node));
+    head->next->data = 2;
+    head->next->next = malloc(sizeof(struct Node));
+    head->next->next->data = 3;
+    head->next->next->next = malloc(sizeof(struct Node));
+    head->next->next->next->data = 4;
+    head->next->next->next->next = malloc(sizeof(struct Node));
+    head->next->next->next->next->data = 5;
+    head->next->next->next->next->next = NULL;
+
+    struct Node *p = alternate_jump(head);
+    return 0;
+}
+
+//p1 → data 3
+//p2 → null
+```
+
+p1 → data 3
+p2 → null
+
+## Inline Assembly
