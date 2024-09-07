@@ -287,3 +287,51 @@ r → p[1] ({3, 4})
 ### Traditional Static Analysis (SVF)
 
 ### LLM with Code Completion
+
+## Loop
+
+### LLM
+
+#### 00
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int arr[] = {10, 20, 30, 40, 50};
+    int *p = arr;
+    for (int i = 0; i < 3; i++)
+        p += 1;
+
+    return 0;
+}
+
+//p → arr[3]
+```
+
+p → arr[3]
+
+#### 01
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int arr[1000];
+    for (int i = 0; i < 1000; i++)
+        arr[i] = i;
+    int *p = arr;
+    for (int i = 0; i < 20; i++)
+        p += i;
+
+    return 0;
+}
+
+//p → arr[210]
+```
+
+p → arr[210]
+
+#### 02
