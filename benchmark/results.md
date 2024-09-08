@@ -27,7 +27,7 @@ int main()
 p → a
 q → undefined (points to memory location after a)
 
-#### 01
+#### 01 (wrong case)
 
 ```c
 #include <stdio.h>
@@ -286,7 +286,7 @@ r → p[1] ({3, 4})
 
 ### Traditional Static Analysis (SVF)
 
-### LLM with Code Completion
+### LLM for Code Completion
 
 ## Loop
 
@@ -580,3 +580,134 @@ p1 → data 3
 p2 → null
 
 ## Inline Assembly
+
+### LLM
+
+#### 00
+
+```c
+#include <stddef.h> // for offsetof
+#include <stdint.h> // for u64
+
+typedef struct data {
+    uint64_t a;
+    uint64_t b;
+    uint64_t c;
+} data;
+
+void foo(data *p) {
+    uint64_t *ptr = &(p->a);
+    
+    asm ( "lea (%[base], %[offset]), %[ptr_out]"
+    : [ptr_out] "=r" (ptr) 
+    : [base] "r" (p), [offset] "i" (offsetof(data, c))
+    ); // “ptr” now points to p->c
+
+    *ptr = 42;
+}
+
+//ptr → c
+```
+
+ptr → c
+
+#### 01
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int arr[] = {10, 20, 30, 40};
+    int *ptr = arr;
+
+    // Inline assembly to increment the pointer
+    asm(
+        "add $4, %0"
+        : "=r"(ptr)
+        : "0"(ptr));
+
+    return 0;
+}
+
+// ptr → arr[1]
+```
+
+ptr → arr + 1
+
+#### 02
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int a = 5, b = 10;
+    int *ptr1 = &a, *ptr2 = &b;
+
+    asm(
+        "mov %1, %%eax;"         // Move ptr1 to eax
+        "mov %2, %0;"            // Move ptr2 to ptr1
+        "mov %%eax, %1;"         // Move eax (original ptr1) to ptr2
+        : "=r"(ptr1), "=r"(ptr2) // Output operands
+        : "r"(ptr2), "0"(ptr1)   // Input operands
+        : "%eax"                 // Clobbered register
+    );
+    return 0;
+}
+
+//ptr1 → b
+//ptr2 → a
+```
+
+ptr1 → b
+
+ptr2 → a
+
+#### 03
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int x = 100, y = 200;
+    int *ptr = &x;
+
+    asm(
+        "mov %1, %0" // Move the address of y into ptr
+        : "=r"(ptr)  // Output operand: updated ptr
+        : "r"(&y)    // Input operand: address of y
+    );
+
+    return 0;
+}
+
+//ptr → y
+```
+
+ptr → y
+
+#### 04
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int arr[] = {10, 20, 30, 40};
+    int *ptr = arr;
+
+    asm(
+        "lea 8(%0), %0" // Load the address of the element 8 bytes away (3rd element)
+        : "=r"(ptr)     // Output operand: updated ptr
+        : "0"(ptr)      // Input operand: initial value of ptr
+    );
+
+    return 0;
+}
+
+//ptr → arr[2]
+```
+
+ptr → arr[2]

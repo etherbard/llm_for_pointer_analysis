@@ -1,0 +1,17 @@
+#include <stdio.h>
+
+int main()
+{
+    int arr[] = {10, 20, 30, 40};
+    int *ptr = arr;
+
+    asm(
+        "lea 8(%0), %0" // Load the address of the element 8 bytes away (3rd element)
+        : "=r"(ptr)     // Output operand: updated ptr
+        : "0"(ptr)      // Input operand: initial value of ptr
+    );
+
+    return 0;
+}
+
+//ptr → arr[2]
